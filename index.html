@@ -8,10 +8,16 @@
 <style>
   :root{
     --indigo:#2E1A6B; --saffron:#FF8F1F; --ink:#1B1530; --muted:#5B5470;
-    --paper:#FBF8FF; --line:#E7E0F5; --card:#ffffff;
+    --paper:#FBF8FF; --line:#E7E0F5; --card:#ffffff; --head:#2E1A6B;
   }
+  /* follow the device, unless the reader picks a side with the button */
   @media (prefers-color-scheme: dark){
-    :root{ --ink:#EDE8F7; --muted:#B9B1CC; --paper:#13101F; --line:#2A2440; --card:#191529; }
+    :root:not([data-theme="light"]){
+      --ink:#EDE8F7; --muted:#B9B1CC; --paper:#13101F; --line:#2A2440; --card:#191529; --head:#C9BCFF;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#EDE8F7; --muted:#B9B1CC; --paper:#13101F; --line:#2A2440; --card:#191529; --head:#C9BCFF;
   }
   *{box-sizing:border-box}
   body{
@@ -23,7 +29,17 @@
     color:#fff; padding:44px 20px 38px;
   }
   .wrap{max-width:760px;margin:0 auto;padding:0 20px}
-  header .wrap{padding:0 20px}
+  header .wrap{padding:0 20px;display:flex;align-items:flex-start;gap:16px}
+  .headings{flex:1;min-width:0}
+  #theme{
+    flex:none;width:42px;height:42px;border-radius:50%;cursor:pointer;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;
+    font-size:19px;line-height:1;display:grid;place-items:center;
+    transition:background .15s ease, transform .15s ease;
+  }
+  #theme:hover{background:rgba(255,255,255,.22)}
+  #theme:active{transform:scale(.93)}
+  #theme:focus-visible{outline:2px solid var(--saffron);outline-offset:2px}
   .brand{font-size:32px;font-weight:700;letter-spacing:-.4px;margin:0}
   .brand span{color:var(--saffron)}
   .tag{margin:6px 0 0;color:#C9BCFF;font-size:16px}
@@ -34,8 +50,7 @@
     background:var(--card); border:1px solid var(--line); border-radius:14px;
     padding:20px 22px; margin:0 0 14px;
   }
-  h2{font-size:18px;margin:0 0 8px;color:var(--indigo)}
-  @media (prefers-color-scheme: dark){ h2{color:#C9BCFF} }
+  h2{font-size:18px;margin:0 0 8px;color:var(--head)}
   p{margin:0 0 10px}
   p:last-child{margin-bottom:0}
   a{color:var(--saffron)}
@@ -47,8 +62,11 @@
 
 <header>
   <div class="wrap">
-    <p class="brand">Dev<span>Shastra</span></p>
-    <p class="tag">Code. Revise. Get Placed. &nbsp;·&nbsp; by Mythic Bharat Studios</p>
+    <div class="headings">
+      <p class="brand">Dev<span>Shastra</span></p>
+      <p class="tag">Code. Revise. Get Placed. &nbsp;·&nbsp; by Mythic Bharat Studios</p>
+    </div>
+    <button id="theme" type="button" aria-label="Switch to dark theme" title="Switch theme">&#9790;</button>
   </div>
 </header>
 
@@ -117,6 +135,41 @@
     © 2026 Mythic Bharat Studios · DevShastra
   </footer>
 </main>
+
+<script>
+  (function () {
+    var root = document.documentElement, btn = document.getElementById("theme");
+
+    function save(v) { try { localStorage.setItem("devshastra-theme", v); } catch (e) {} }
+    function load() { try { return localStorage.getItem("devshastra-theme"); } catch (e) { return null; } }
+
+    function isDark() {
+      var picked = root.getAttribute("data-theme");
+      if (picked) return picked === "dark";
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+
+    function paint() {
+      var dark = isDark();
+      btn.innerHTML = dark ? "&#9788;" : "&#9790;";     // sun while dark, moon while light
+      btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+    }
+
+    var saved = load();
+    if (saved === "dark" || saved === "light") root.setAttribute("data-theme", saved);
+    paint();
+
+    btn.addEventListener("click", function () {
+      var next = isDark() ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      save(next);
+      paint();
+    });
+
+    // nobody has chosen yet: keep following the device
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", paint);
+  })();
+</script>
 
 </body>
 </html>
