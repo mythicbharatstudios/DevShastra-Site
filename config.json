@@ -1,9 +1,14 @@
 {
-  "version": 1,
-  "ads": true,
+  "version": 2,
+  "ads": false,
   "premium": true,
-  "contests": true,
+  "contests": false,
   "contentUpdates": true,
   "minVersionCode": 0,
-  "announcement": null
+  "announcement": {
+    "id": "console-test-1",
+    "title": "Remote control works",
+    "body": "This message was published from the founders' console without a new app release.",
+    "url": "https://mythicbharatstudios.github.io/DevShastra-Site/"
+  }
 }
