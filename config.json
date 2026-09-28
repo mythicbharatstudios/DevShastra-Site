@@ -1,9 +1,9 @@
 {
-  "version": 3,
+  "version": 1,
   "ads": true,
   "premium": true,
   "contests": true,
   "contentUpdates": true,
-  "minVersionCode": 2,
+  "minVersionCode": 0,
   "announcement": null
 }
